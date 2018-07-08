@@ -75,7 +75,50 @@ class Trie
       yield(word_found, current_child)
     end
 
-    base
-=======
+    current_child
+  end
+
+  def suggest(word_prefix)
+    # unvisited node array
+    unvisited_nodes = []
+    # array of suggested words
+    word_suggestions = []
+    # array to store current string
+    current_string = []
+
+    # find the node that corresponds to the last character
+    unvisited_nodes << find_word(word_prefix)
+    # start with the children of the last letter of entered word
+    current_string << word_prefix.chars.take(word_prefix.length - 1)
+
+    # return empty array if no results
+    if unvisited_nodes.empty?
+      return []
+    end
+
+    # loop over all unvisited nodes
+    until unvisited_nodes.empty?
+      # remove current working node from unvisited node array
+      node = unvisited_nodes.pop
+      # if guard node, pop last character and move up trie
+      if node == :guard_node
+        current_string.pop
+        next
+      end
+      # build string with current node's value character
+      current_string << node.value
+      # add a guard node to every node object we encounter
+      unvisited_nodes << :guard_node
+      # if the node is a word, add all current string characters to word list
+      if node.is_word
+        word_suggestions << current_string.join
+      end
+      # cycle through current node's children and add more nodes to unvisited nodes
+      node.children.each do |node_object|
+        unvisited_nodes << node_object
+      end
+    end
+
+      word_suggestions.sort
   end
 end
