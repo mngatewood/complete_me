@@ -52,18 +52,32 @@ class TrieTest < Minitest::Test
     assert_equal 7, @trie.count
   end
 
-  def test_it_populates
-    dictionary = File.read('/usr/share/dict/words')
-    @trie.populate(dictionary)
-    assert_equal 235_886, @trie.count
-  end
+  # def test_it_populates
+  #   dictionary = File.read('/usr/share/dict/words')
+  #   @trie.populate(dictionary)
+  #   assert_equal 235_886, @trie.count
+  # end
+  #
+  # def test_it_finds_words
+  #   dictionary = File.read('/usr/share/dict/words')
+  #   @trie.populate(dictionary)
+  #
+  #   assert @trie.include?('cat')
+  #   refute @trie.include?('asmflkasmfkla')
+  # end
 
-  def test_it_finds_words
-    dictionary = File.read('/usr/share/dict/words')
-    @trie.populate(dictionary)
-
-    assert @trie.include?('cat')
-    refute @trie.include?('asmflkasmfkla')
+  def test_it_suggests_words
+    # dictionary = File.read('/usr/share/dict/words')
+    # @trie.populate(dictionary)
+    @trie.add_word("cazimi")
+    @trie.add_word("caza")
+    @trie.add_word("cay")
+    @trie.add_word("cayman")
+    @trie.add_word("cayenne")
+    @trie.add_word("cayenned")
+    @trie.add_word("caxon")
+    @trie.add_word("caxiri")
+    @trie.find_words_starting_with('ca')
   end
 
   # def test_it_suggests_words

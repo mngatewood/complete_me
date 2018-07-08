@@ -75,7 +75,32 @@ class Trie
       yield(word_found, current_child)
     end
 
-    base
-=======
+    current_child
+  end
+
+  def find_words_starting_with(prefix)
+    unvisited_nodes = []
+    words = []
+    current_string = []
+
+    unvisited_nodes << find_word(prefix)
+    current_string << prefix.chars.take(prefix.size - 1)
+
+    return [] unless unvisited_nodes.first
+
+    until unvisited_nodes.empty?
+      node = unvisited_nodes.pop
+
+      current_string.pop && next if node == :guard_node
+
+      current_string << node.value
+      unvisited_nodes << :guard_node
+
+      words << current_string.join if node.is_word
+      require "pry"; binding.pry
+      node.children.each { |current_node| unvisited_nodes << current_node }
+    end
+
+    words
   end
 end
