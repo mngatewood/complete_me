@@ -2,11 +2,11 @@
 
 require './lib/node'
 
-# defines the Trie method
+# defines the Trie class
 class Trie
   attr_accessor :root,
                 :count
-                
+
   def initialize
     @root = Node.new('*')
     @count = 0
@@ -44,5 +44,29 @@ class Trie
     @count += 1
   end
 
+  def populate(dictionary)
+    words = dictionary.split("\n")
+    words.each do |word|
+      add_word(word)
+    end
+  end
+
   # ----------------- INFORMATION METHODS ---------------------------------
+  def suggest(word)
+    letters = word.chars
+    base = @root
+    suggested_words = []
+
+    letters.each do |letter|
+      base = find_character(letter, base.children)
+    end
+
+    suggested_words
+  end
+
+  def find_character(letter, current_child)
+    current_child.find do |node_object|
+      letter == node_object.value
+    end
+  end
 end

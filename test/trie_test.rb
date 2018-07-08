@@ -4,7 +4,6 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require './lib/node'
 require './lib/trie'
-require 'pry'
 
 class TrieTest < Minitest::Test
   def test_it_exists
@@ -31,11 +30,9 @@ class TrieTest < Minitest::Test
     assert_equal 1, trie.root.children.count
   end
 
-  def test_it_adds_a_words
+  def test_it_adds_words
     trie = Trie.new
     trie.add_word('cat')
-    trie.add_word('can')
-    trie.add_word('cost')
     trie.add_word('lap')
     trie.add_word('astro')
     trie.add_word('dinosaur')
@@ -53,5 +50,21 @@ class TrieTest < Minitest::Test
     trie.add_word('dinosaur')
     trie.add_word('zebra')
     assert_equal 7, trie.count
+  end
+
+  def test_it_populates
+    trie = Trie.new
+    dictionary = File.read('/usr/share/dict/words')
+    trie.populate(dictionary)
+    assert_equal 235_886, trie.count
+  end
+
+  def test_it_suggests_words
+    trie = Trie.new
+    dictionary = File.read('/usr/share/dict/words')
+    trie.populate(dictionary)
+    expected = []
+
+    assert_equal expected, trie.suggest('piz')
   end
 end
