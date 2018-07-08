@@ -4,7 +4,6 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require './lib/node'
 require './lib/trie'
-require 'pry'
 
 class TrieTest < Minitest::Test
   def setup
