@@ -4,9 +4,12 @@ require './lib/node'
 
 # defines the Trie method
 class Trie
-  attr_accessor :root
+  attr_accessor :root,
+                :count
+                
   def initialize
     @root = Node.new('*')
+    @count = 0
   end
 
 # ----------------- ADDITION METHODS ---------------------------------------
@@ -38,5 +41,8 @@ class Trie
     end
 
     base.is_word = true
+    @count += 1
   end
+
+  # ----------------- INFORMATION METHODS ---------------------------------
 end

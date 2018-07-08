@@ -42,4 +42,16 @@ class TrieTest < Minitest::Test
     trie.add_word('zebra')
     assert_equal 5, trie.root.children.count
   end
+
+  def test_it_counts_words
+    trie = Trie.new
+    trie.add_word('cat')
+    trie.add_word('can')
+    trie.add_word('cost')
+    trie.add_word('lap')
+    trie.add_word('astro')
+    trie.add_word('dinosaur')
+    trie.add_word('zebra')
+    assert_equal 7, trie.count
+  end
 end
