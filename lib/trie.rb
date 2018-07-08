@@ -51,22 +51,31 @@ class Trie
     end
   end
 
-  # ----------------- INFORMATION METHODS ---------------------------------
-  def suggest(word)
-    letters = word.chars
-    base = @root
-    suggested_words = []
-
-    letters.each do |letter|
-      base = find_character(letter, base.children)
-    end
-
-    suggested_words
-  end
-
   def find_character(letter, current_child)
     current_child.find do |node_object|
       letter == node_object.value
     end
+  end
+
+  def include?(word)
+    find_word(word) do |found, current_child|
+      return found && current_child.is_word
+    end
+  end
+
+  def find_word(word)
+    letters = word.chars
+    current_child = @root
+
+    word_found = letters.all? do |letter|
+      current_child = find_character(letter, current_child.children)
+    end
+
+    if block_given?
+      yield(word_found, current_child)
+    end
+
+    base
+=======
   end
 end
