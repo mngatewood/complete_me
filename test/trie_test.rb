@@ -77,7 +77,10 @@ class TrieTest < Minitest::Test
     @trie.add_word("cayenned")
     @trie.add_word("caxon")
     @trie.add_word("caxiri")
-    @trie.find_words_starting_with('ca')
+
+    expected = ['cazimi', 'caza', 'cay', 'cayman', 'cayenne', 'cayenned', 'caxon', 'caxiri'].sort
+
+    assert_equal expected, @trie.suggest('ca')
   end
 
   # def test_it_suggests_words

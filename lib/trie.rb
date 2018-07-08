@@ -78,29 +78,47 @@ class Trie
     current_child
   end
 
-  def find_words_starting_with(prefix)
+  def suggest(word_prefix)
+    # unvisited node array
     unvisited_nodes = []
-    words = []
+    # array of suggested words
+    word_suggestions = []
+    # array to store current string
     current_string = []
 
-    unvisited_nodes << find_word(prefix)
-    current_string << prefix.chars.take(prefix.size - 1)
+    # find the node that corresponds to the last character
+    unvisited_nodes << find_word(word_prefix)
+    # start with the children of the last letter of entered word
+    current_string << word_prefix.chars.take(word_prefix.length - 1)
 
-    return [] unless unvisited_nodes.first
-
-    until unvisited_nodes.empty?
-      node = unvisited_nodes.pop
-
-      current_string.pop && next if node == :guard_node
-
-      current_string << node.value
-      unvisited_nodes << :guard_node
-
-      words << current_string.join if node.is_word
-      require "pry"; binding.pry
-      node.children.each { |current_node| unvisited_nodes << current_node }
+    # return empty array if no results
+    if unvisited_nodes.empty?
+      return []
     end
 
-    words
+    # loop over all unvisited nodes
+    until unvisited_nodes.empty?
+      # remove current working node from unvisited node array
+      node = unvisited_nodes.pop
+      # if guard node, pop last character and move up trie
+      if node == :guard_node
+        current_string.pop
+        next
+      end
+      # build string with current node's value character
+      current_string << node.value
+      # add a guard node to every node object we encounter
+      unvisited_nodes << :guard_node
+      # if the node is a word, add all current string characters to word list
+      if node.is_word
+        word_suggestions << current_string.join
+      end
+      # cycle through current node's children and add more nodes to unvisited nodes
+      node.children.each do |node_object|
+        unvisited_nodes << node_object
+      end
+    end
+
+      word_suggestions.sort
   end
 end
