@@ -83,4 +83,18 @@ class TrieTest < Minitest::Test
 
     assert_equal [], actual
   end
+
+  def test_it_weighs_words_on_user_input
+    actual = @trie.suggest('piz')
+    expected = ["pize", "pizza", "pizzeria", "pizzicato", "pizzle"]
+
+    assert_equal expected, actual
+
+    @trie.select('piz', 'pizzeria')
+
+    actual2 = @trie.suggest('piz')
+    expected2 = ["pizzeria", "pize", "pizza", "pizzicato", "pizzle"]
+
+    assert_equal expected2, actual2
+  end
 end
