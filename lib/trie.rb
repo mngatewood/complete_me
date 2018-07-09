@@ -79,6 +79,10 @@ class Trie
   end
 
   def suggest(word_prefix)
+    if word_prefix.length < 1
+      return []
+    end
+
     # unvisited node array
     unvisited_nodes = []
     # array of suggested words
@@ -92,7 +96,7 @@ class Trie
     current_string << word_prefix.chars.take(word_prefix.length - 1)
 
     # return empty array if no results
-    if unvisited_nodes.empty?
+    unless unvisited_nodes.first
       return []
     end
 

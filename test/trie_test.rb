@@ -18,7 +18,7 @@ class TrieTest < Minitest::Test
   end
 
   def test_it_adds_nodes
-    actual = (@trie.add_node('a', @trie.root.children)).value
+    actual = @trie.add_node('a', @trie.root.children).value
     assert_equal 'a', actual
   end
 
@@ -33,17 +33,6 @@ class TrieTest < Minitest::Test
     assert_equal 1, @trie.root.children.count
   end
 
-  def test_it_adds_a_words
-    @trie.add_word('cat')
-    @trie.add_word('can')
-    @trie.add_word('cost')
-    @trie.add_word('lap')
-    @trie.add_word('astro')
-    @trie.add_word('dinosaur')
-    @trie.add_word('zebra')
-    assert_equal 5, @trie.root.children.count
-  end
-
   def test_it_counts_words
     @trie.add_word('cat')
     @trie.add_word('can')
@@ -55,43 +44,43 @@ class TrieTest < Minitest::Test
     assert_equal 7, @trie.count
   end
 
-  # def test_it_populates
-  #   dictionary = File.read('/usr/share/dict/words')
-  #   @trie.populate(dictionary)
-  #   assert_equal 235_886, @trie.count
-  # end
-  #
-  # def test_it_finds_words
-  #   dictionary = File.read('/usr/share/dict/words')
-  #   @trie.populate(dictionary)
-  #
-  #   assert @trie.include?('cat')
-  #   refute @trie.include?('asmflkasmfkla')
-  # end
+  def test_it_populates
+    dictionary = File.read('/usr/share/dict/words')
+    @trie.populate(dictionary)
+    assert_equal 235_886, @trie.count
+  end
+
+  def test_it_finds_words
+    @trie.add_word('cat')
+
+    assert @trie.include?('cat')
+    refute @trie.include?('asmflkasmfkla')
+  end
 
   def test_it_suggests_words
-    # dictionary = File.read('/usr/share/dict/words')
-    # @trie.populate(dictionary)
-    @trie.add_word("cazimi")
-    @trie.add_word("caza")
-    @trie.add_word("cay")
-    @trie.add_word("cayman")
-    @trie.add_word("cayenne")
-    @trie.add_word("cayenned")
-    @trie.add_word("caxon")
-    @trie.add_word("caxiri")
+    @trie.add_word('cazimi')
+    @trie.add_word('caza')
+    @trie.add_word('cay')
+    @trie.add_word('cayman')
+    @trie.add_word('cayenne')
+    @trie.add_word('cayenned')
+    @trie.add_word('caxon')
+    @trie.add_word('caxiri')
 
     expected = ['cazimi', 'caza', 'cay', 'cayman', 'cayenne', 'cayenned', 'caxon', 'caxiri'].sort
 
     assert_equal expected, @trie.suggest('ca')
   end
 
-  # def test_it_suggests_words
-  #
-  #   dictionary = File.read('/usr/share/dict/words')
-  #   @trie.populate(dictionary)
-  #   expected = []
-  #
-  #   assert_equal expected, @trie.suggest('piz')
-  # end
+  def test_it_handles_empty_input_for_suggest
+    actual = @trie.suggest('')
+
+    assert_equal [], actual
+  end
+
+  def test_it_handles_no_matches_for_suggest
+    actual = @trie.suggest('etewdjdkd')
+
+    assert_equal [], actual
+  end
 end
