@@ -14,6 +14,7 @@ class TrieTest < Minitest::Test
   end
 
   def test_it_exists
+    
     assert_instance_of Trie, @trie
   end
 
@@ -85,7 +86,7 @@ class TrieTest < Minitest::Test
   end
 
   def test_it_weighs_words_on_user_input
-    skip
+    @trie.populate(File.read('/usr/share/dict/words'))
     actual = @trie.suggest('piz')
     expected = ["pize", "pizza", "pizzeria", "pizzicato", "pizzle"]
 

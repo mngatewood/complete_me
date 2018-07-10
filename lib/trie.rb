@@ -16,36 +16,6 @@ class Trie
 
 # ----------------- ADDITION METHODS ---------------------------------------
 
-  def add_node(new_character, current_child)
-    Node.new(new_character).tap do |created_node|
-      current_child << created_node
-    end
-  end
-
-  def add_character(new_character, current_child)
-    check_for_node = current_child.find do |node_object|
-      node_object.value == new_character
-    end
-
-    if check_for_node.is_a?(Node)
-      check_for_node
-    else
-      add_node(new_character, current_child)
-    end
-  end
-
-  def add_word(word)
-    letters = word.chars
-    base = @root
-
-    letters.each do |letter|
-      base = add_character(letter, base.children)
-    end
-
-    base.is_word = true
-    @count += 1
-  end
-
   def populate(dictionary)
     words = dictionary.split("\n")
     words.each do |word|
@@ -53,36 +23,11 @@ class Trie
     end
   end
 
-  def find_character(letter, current_child)
-    current_child.find do |node_object|
-      letter == node_object.value
-    end
-  end
-
-  def include?(word)
-    find_word(word) do |found, current_child|
-      return found && current_child.is_word
-    end
-  end
-
-  def find_word(word)
-    letters = word.chars
-    current_child = @root
-
-    word_found = letters.all? do |letter|
-      current_child = find_character(letter, current_child.children)
-    end
-
-    if block_given?
-      yield(word_found, current_child)
-    end
-
-    current_child
-  end
-
   def suggest(word_prefix)
     if @weight_hash.key?(word_prefix)
-      suggestion_hash = @weight_hash[word_prefix].sort_by {|_key, value| value}.reverse.to_h.keys
+      suggestion_hash = @weight_hash[word_prefix].sort.to_h
+      suggestion_hash = suggestion_hash.sort_by {|key, value| [-value, key] }.to_h
+      suggestion_hash.keys
     else
       tree_search(word_prefix)
     end
@@ -122,6 +67,46 @@ class Trie
       word_suggestions.sort
   end
 
+  def select(search_string, chosen_suggestion)
+    if @weight_hash.keys.include?(search_string)
+      @weight_hash[search_string][chosen_suggestion] += 1
+    else
+      store(search_string, chosen_suggestion)
+    end
+  end
+
+  # Private Methods
+
+  def add_node(new_character, current_child)
+    Node.new(new_character).tap do |created_node|
+      current_child << created_node
+    end
+  end
+
+  def add_character(new_character, current_child)
+    check_for_node = current_child.find do |node_object|
+      node_object.value == new_character
+    end
+
+    if check_for_node.is_a?(Node)
+      check_for_node
+    else
+      add_node(new_character, current_child)
+    end
+  end
+
+  def add_word(word)
+    letters = word.chars
+    base = @root
+
+    letters.each do |letter|
+      base = add_character(letter, base.children)
+    end
+
+    base.is_word = true
+    @count += 1
+  end
+
   def store(search_string, chosen_suggestion)
     suggestion_array = suggest(search_string)
     @weight_hash[search_string] = {}
@@ -131,11 +116,30 @@ class Trie
     @weight_hash[search_string][chosen_suggestion] += 1
   end
 
-  def select(search_string, chosen_suggestion)
-    if @weight_hash.keys.include?(search_string)
-      @weight_hash[search_string][chosen_suggestion] += 1
-    else
-      store(search_string, chosen_suggestion)
+  def find_character(letter, current_child)
+    current_child.find do |node_object|
+      letter == node_object.value
     end
+  end
+
+  def include?(word)
+    find_word(word) do |found, current_child|
+      return found && current_child.is_word
+    end
+  end
+
+  def find_word(word)
+    letters = word.chars
+    current_child = @root
+
+    word_found = letters.all? do |letter|
+      current_child = find_character(letter, current_child.children)
+    end
+
+    if block_given?
+      yield(word_found, current_child)
+    end
+
+    current_child
   end
 end
