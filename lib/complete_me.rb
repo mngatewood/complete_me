@@ -3,7 +3,7 @@
 require './lib/node'
 
 # defines the Trie class
-class Trie
+class CompleteMe
   attr_accessor :root,
                 :count,
                 :weight_hash
@@ -13,8 +13,6 @@ class Trie
     @count = 0
     @weight_hash = Hash.new
   end
-
-# ----------------- ADDITION METHODS ---------------------------------------
 
   def populate(dictionary)
     words = dictionary.split("\n")
@@ -64,7 +62,6 @@ class Trie
         unvisited_nodes << node_object
       end
     end
-
       word_suggestions.sort
   end
 
