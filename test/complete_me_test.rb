@@ -1,102 +1,78 @@
-# frozen_string_literal: true
 
 require 'simplecov'
 SimpleCov.start
 
-require 'minitest/autorun'
-require 'minitest/pride'
-require './lib/node'
-require './lib/complete_me'
+require "minitest"
+require "minitest/emoji"
+require "minitest/autorun"
+require "../complete_me/lib/complete_me"
 
 class CompleteMeTest < Minitest::Test
+  attr_reader :cm
   def setup
-    @complete_me = CompleteMe.new
+    @cm = CompleteMe.new
   end
 
-  def test_it_exists
-
-    assert_instance_of CompleteMe, @complete_me
+  def test_starting_count
+    assert_equal 0, cm.count
   end
 
-  def test_it_adds_nodes
-    actual = @complete_me.add_node('a', @complete_me.root.children).value
-    assert_equal 'a', actual
+  def test_inserts_single_word
+    cm.insert("pizza")
+    assert_equal 1, cm.count
   end
 
-  def test_it_adds_character
-    @complete_me.add_character('a', @complete_me.root.children)
-    assert_equal 'a', @complete_me.root.children[0].value
+  def test_inserts_multiple_words
+    cm.populate("pizza\ndog\ncat")
+    assert_equal 3, cm.count
   end
 
-  def test_it_doesnt_add_duplicates
-    @complete_me.add_character('a', @complete_me.root.children)
-    @complete_me.add_character('a', @complete_me.root.children)
-    assert_equal 1, @complete_me.root.children.count
+  def test_counts_inserted_words
+    insert_words(["pizza", "aardvark", "zombies", "a", "xylophones"])
+    assert_equal 5, cm.count
   end
 
-  def test_it_counts_words
-    @complete_me.add_word('cat')
-    @complete_me.add_word('can')
-    @complete_me.add_word('cost')
-    @complete_me.add_word('lap')
-    @complete_me.add_word('astro')
-    @complete_me.add_word('dinosaur')
-    @complete_me.add_word('zebra')
-    assert_equal 7, @complete_me.count
+  def test_suggests_off_of_small_dataset
+    insert_words(["pizza", "aardvark", "zombies", "a", "xylophones"])
+    assert_equal ["pizza"], cm.suggest("p")
+    assert_equal ["pizza"], cm.suggest("piz")
+    assert_equal ["zombies"], cm.suggest("zo")
+    assert_equal ["a", "aardvark"], cm.suggest("a").sort
+    assert_equal ["aardvark"], cm.suggest("aa")
   end
 
-  def test_it_populates
-    dictionary = File.read('/usr/share/dict/words')
-    @complete_me.populate(dictionary)
-    assert_equal 235_886, @complete_me.count
+  def test_inserts_medium_dataset
+    cm.populate(medium_word_list)
+    assert_equal medium_word_list.split("\n").count, cm.count
   end
 
-  def test_it_finds_words
-    @complete_me.add_word('cat')
-
-    assert @complete_me.include?('cat')
-    refute @complete_me.include?('asmflkasmfkla')
+  def test_suggests_off_of_medium_dataset
+    cm.populate(medium_word_list)
+    assert_equal ["williwaw", "wizardly"], cm.suggest("wi").sort
   end
 
-  def test_it_suggests_words
-    @complete_me.add_word('cazimi')
-    @complete_me.add_word('caza')
-    @complete_me.add_word('cay')
-    @complete_me.add_word('cayman')
-    @complete_me.add_word('cayenne')
-    @complete_me.add_word('cayenned')
-    @complete_me.add_word('caxon')
-    @complete_me.add_word('caxiri')
-
-    expected = ['cazimi', 'caza', 'cay', 'cayman', 'cayenne', 'cayenned', 'caxon', 'caxiri'].sort
-
-    assert_equal expected, @complete_me.suggest('ca')
+  def test_selects_off_of_medium_dataset
+    cm.populate(medium_word_list)
+    cm.select("wi", "wizardly")
+    assert_equal ["wizardly", "williwaw"], cm.suggest("wi")
   end
 
-  def test_it_handles_empty_input_for_suggest
-    actual = @complete_me.suggest('')
-
-    assert_equal [], actual
+  def test_works_with_large_dataset
+    cm.populate(large_word_list)
+    assert_equal ["doggerel", "doggereler", "doggerelism", "doggerelist", "doggerelize", "doggerelizer"], cm.suggest("doggerel").sort
+    cm.select("doggerel", "doggerelist")
+    assert_equal "doggerelist", cm.suggest("doggerel").first
   end
 
-  def test_it_handles_no_matches_for_suggest
-    actual = @complete_me.suggest('etewdjdkd')
-
-    assert_equal [], actual
+  def insert_words(words)
+    cm.populate(words.join("\n"))
   end
 
-  def test_it_weighs_words_on_user_input
-    @complete_me.populate(File.read('/usr/share/dict/words'))
-    actual = @complete_me.suggest('piz')
-    expected = ["pize", "pizza", "pizzeria", "pizzicato", "pizzle"]
+  def medium_word_list
+    File.read("./test/medium.txt")
+  end
 
-    assert_equal expected, actual
-
-    @complete_me.select('piz', 'pizzeria')
-
-    actual2 = @complete_me.suggest('piz')
-    expected2 = ["pizzeria", "pize", "pizza", "pizzicato", "pizzle"]
-
-    assert_equal expected2, actual2
+  def large_word_list
+    File.read("/usr/share/dict/words")
   end
 end
