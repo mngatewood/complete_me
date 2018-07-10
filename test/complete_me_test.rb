@@ -64,6 +64,36 @@ class CompleteMeTest < Minitest::Test
     assert_equal "doggerelist", cm.suggest("doggerel").first
   end
 
+  def test_it_deletes_words
+    cm.populate(large_word_list)
+
+    cm.delete_word('pizzeria')
+
+    expected = ["pize", "pizza", "pizzicato", "pizzle"]
+    actual = cm.suggest('piz')
+
+    assert_equal expected, actual
+  end
+
+  def test_it_deletes_words
+    cm.populate(large_word_list)
+
+    cm.delete_word('pizzeria')
+
+    expected = ["pize", "pizza", "pizzicato", "pizzle"]
+    actual = cm.suggest('piz')
+
+    assert_equal expected, actual
+  end
+
+  def test_it_can_do_addresses
+    complete_me = CompleteMe.new
+    complete_me.populate(File.read('./test/address.txt'))
+    actual = complete_me.suggest('3161')
+    expected = ["3161 Arapahoe St", "3161 N Eliot St", "3161 N Fulton St", "3161 N Hanover St", "3161 N Quitman St", "3161 W Avondale Dr", "3161 W Custer Pl", "3161 W Ohio Ave"]
+    assert_equal actual, expected
+  end
+
   def insert_words(words)
     cm.populate(words.join("\n"))
   end

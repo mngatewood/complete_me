@@ -34,8 +34,8 @@ class CompleteMe
 
     letters.each { |letter| base = node_validator(letter, base.children) }
 
-    base.is_word = true
     @count += 1
+    base.is_word = true
   end
 
   def select(search_string, chosen_suggestion)
@@ -113,5 +113,23 @@ class CompleteMe
       current_child = check_for_node(letter, current_child.children)
     end
     current_child
+  end
+
+  def delete_word(word)
+    word_string = word
+    # Split word to be deleted into an array of characters
+    # Grab the node where the final letter of the word ends
+    until word_string.empty?
+      previous_node = find_node(word_string)
+      current_node = find_node(word_string.chop!)
+
+      if previous_node.children.length < 1
+        current_node.children.delete(previous_node)
+      else
+        break
+      end
+    end
+
+    @count -= 1
   end
 end
