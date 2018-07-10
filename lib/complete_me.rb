@@ -114,4 +114,26 @@ class CompleteMe
     end
     current_child
   end
+
+  def test_it_can_do_addresses
+    complete_me = CompleteMe.new
+    complete_me.populate(File.read('./test/address.txt'))
+    actual = complete_me.suggest('3161')
+    expected = ["3161 Arapahoe St", "3161 N Eliot St", "3161 N Fulton St", "3161 N Hanover St", "3161 N Quitman St", "3161 W Avondale Dr", "3161 W Custer Pl", "3161 W Ohio Ave"]
+    assert_equal actual, expected
+  end
+
+  def delete_word(word)
+    # Start our pointer at the base root node
+    base = @root
+    # Split word up letter by letter into an array of characters
+    letters = word.chars
+    # Traverse trie and go down to the node which contains the last letter of the word
+    letters.each do |letter|
+
+    end
+    # Begin deleting node moving upwards through the trie
+    # Stop when hitting the next "is_word = true" value
+    # Be sure to delete the word from the selection weight list as well
+  end
 end

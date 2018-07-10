@@ -3,7 +3,7 @@ require 'simplecov'
 SimpleCov.start
 
 require "minitest"
-require "minitest/emoji"
+# require "minitest/emoji"
 require "minitest/autorun"
 require "../complete_me/lib/complete_me"
 
@@ -62,6 +62,22 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["doggerel", "doggereler", "doggerelism", "doggerelist", "doggerelize", "doggerelizer"], cm.suggest("doggerel").sort
     cm.select("doggerel", "doggerelist")
     assert_equal "doggerelist", cm.suggest("doggerel").first
+  end
+
+  def test_it_deletes_words
+    skip
+    cm.populate(medium_word_list)
+    expected = ["williwaw", "wizardly"]
+    actual = cm.suggest('wi')
+
+    assert_equal expected, actual
+
+    cm.delete_word('wizardly')
+
+    expected2 = ["williwaw"]
+    actual2 = cm.suggest('wi')
+
+    assert_equal expected2, actual2
   end
 
   def insert_words(words)
