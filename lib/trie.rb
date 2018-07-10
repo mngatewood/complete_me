@@ -5,11 +5,13 @@ require './lib/node'
 # defines the Trie class
 class Trie
   attr_accessor :root,
-                :count
+                :count,
+                :weight_hash
 
   def initialize
     @root = Node.new('*')
     @count = 0
+    @weight_hash = Hash.new
   end
 
 # ----------------- ADDITION METHODS ---------------------------------------
@@ -79,50 +81,61 @@ class Trie
   end
 
   def suggest(word_prefix)
+    if @weight_hash.key?(word_prefix)
+      suggestion_hash = @weight_hash[word_prefix].sort_by {|_key, value| value}.reverse.to_h.keys
+    else
+      tree_search(word_prefix)
+    end
+  end
+
+  def tree_search(word_prefix)
     if word_prefix.length < 1
       return []
     end
-
-    # unvisited node array
     unvisited_nodes = []
-    # array of suggested words
     word_suggestions = []
-    # array to store current string
     current_string = []
 
-    # find the node that corresponds to the last character
     unvisited_nodes << find_word(word_prefix)
-    # start with the children of the last letter of entered word
     current_string << word_prefix.chars.take(word_prefix.length - 1)
 
-    # return empty array if no results
     unless unvisited_nodes.first
       return []
     end
 
-    # loop over all unvisited nodes
     until unvisited_nodes.empty?
-      # remove current working node from unvisited node array
       node = unvisited_nodes.pop
-      # if guard node, pop last character and move up trie
       if node == :guard_node
         current_string.pop
         next
       end
-      # build string with current node's value character
       current_string << node.value
-      # add a guard node to every node object we encounter
       unvisited_nodes << :guard_node
-      # if the node is a word, add all current string characters to word list
       if node.is_word
         word_suggestions << current_string.join
       end
-      # cycle through current node's children and add more nodes to unvisited nodes
       node.children.each do |node_object|
         unvisited_nodes << node_object
       end
     end
 
       word_suggestions.sort
+  end
+
+  def store(search_string, chosen_suggestion)
+    suggestion_array = suggest(search_string)
+    @weight_hash[search_string] = {}
+    suggestion_array.each do |suggestion|
+      @weight_hash[search_string][suggestion] = 0
+    end
+    @weight_hash[search_string][chosen_suggestion] += 1
+  end
+
+  def select(search_string, chosen_suggestion)
+    if @weight_hash.keys.include?(search_string)
+      @weight_hash[search_string][chosen_suggestion] += 1
+    else
+      store(search_string, chosen_suggestion)
+    end
   end
 end

@@ -85,6 +85,7 @@ class TrieTest < Minitest::Test
   end
 
   def test_it_weighs_words_on_user_input
+    skip
     actual = @trie.suggest('piz')
     expected = ["pize", "pizza", "pizzeria", "pizzicato", "pizzle"]
 
