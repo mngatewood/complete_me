@@ -3,7 +3,7 @@ require 'simplecov'
 SimpleCov.start
 
 require "minitest"
-# require "minitest/emoji"
+require "minitest/emoji"
 require "minitest/autorun"
 require "../complete_me/lib/complete_me"
 
@@ -65,19 +65,33 @@ class CompleteMeTest < Minitest::Test
   end
 
   def test_it_deletes_words
-    skip
-    cm.populate(medium_word_list)
-    expected = ["williwaw", "wizardly"]
-    actual = cm.suggest('wi')
+    cm.populate(large_word_list)
+
+    cm.delete_word('pizzeria')
+
+    expected = ["pize", "pizza", "pizzicato", "pizzle"]
+    actual = cm.suggest('piz')
 
     assert_equal expected, actual
+  end
 
-    cm.delete_word('wizardly')
+  def test_it_deletes_words
+    cm.populate(large_word_list)
 
-    expected2 = ["williwaw"]
-    actual2 = cm.suggest('wi')
+    cm.delete_word('pizzeria')
 
-    assert_equal expected2, actual2
+    expected = ["pize", "pizza", "pizzicato", "pizzle"]
+    actual = cm.suggest('piz')
+
+    assert_equal expected, actual
+  end
+
+  def test_it_can_do_addresses
+    complete_me = CompleteMe.new
+    complete_me.populate(File.read('./test/address.txt'))
+    actual = complete_me.suggest('3161')
+    expected = ["3161 Arapahoe St", "3161 N Eliot St", "3161 N Fulton St", "3161 N Hanover St", "3161 N Quitman St", "3161 W Avondale Dr", "3161 W Custer Pl", "3161 W Ohio Ave"]
+    assert_equal actual, expected
   end
 
   def insert_words(words)
