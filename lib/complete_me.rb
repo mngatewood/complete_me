@@ -117,16 +117,26 @@ class CompleteMe
 
   def delete_word(word)
     word_string = word
+    iteration_counter = 0
     # Split word to be deleted into an array of characters
     # Grab the node where the final letter of the word ends
     until word_string.empty?
       previous_node = find_node(word_string)
       current_node = find_node(word_string.chop!)
+      iteration_counter += 1
 
-      if previous_node.children.length < 1
-        current_node.children.delete(previous_node)
+      if iteration_counter == 1
+        if previous_node.children.length < 1
+          current_node.children.delete(previous_node)
+        else
+          break
+        end
       else
-        break
+        if previous_node.children.length < 1 && previous_node.is_word == false
+          current_node.children.delete(previous_node)
+        else
+          break
+        end
       end
     end
 
