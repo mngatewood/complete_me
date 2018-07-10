@@ -25,9 +25,10 @@ class Trie
 
   def suggest(word_prefix)
     if @weight_hash.key?(word_prefix)
-      suggestion_hash = @weight_hash[word_prefix].sort.to_h
-      suggestion_hash = suggestion_hash.sort_by {|key, value| [-value, key] }.to_h
-      suggestion_hash.keys
+      suggestion_hash = @weight_hash[word_prefix].sort_by do |key, value|
+        [-value, key]
+      end
+      suggestion_hash.to_h.keys
     else
       tree_search(word_prefix)
     end
