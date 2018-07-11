@@ -109,4 +109,10 @@ class CompleteMeTest < Minitest::Test
 
     assert_equal expected2, actual2
   end
+
+  def test_it_populates_csv
+    complete_me = CompleteMe.new
+    complete_me.csv_handler('./test/addresses.csv', 'FULL_ADDRESS')
+    assert_equal 312_749, complete_me.count
+  end
 end
