@@ -64,7 +64,7 @@ class CompleteMeTest < Minitest::Test
     assert_equal "doggerelist", cm.suggest("doggerel").first
   end
 
-  def test_it_deletes_words
+  def test_it_deletes_rwords
     cm.populate(large_word_list)
 
     cm.select('piz', 'pizzeria')
