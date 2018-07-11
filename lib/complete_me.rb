@@ -143,7 +143,7 @@ class CompleteMe
     @count -= 1
   end
 
-  def csv_handler(csv_file, column_header)
+  def populate_with_csv(csv_file, column_header)
     csv = CSV.read(csv_file, :headers=>true)
     csv.each do |row|
       insert(row[column_header])
