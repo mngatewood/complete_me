@@ -67,17 +67,7 @@ class CompleteMeTest < Minitest::Test
   def test_it_deletes_words
     cm.populate(large_word_list)
 
-    cm.delete_word('pizzeria')
-
-    expected = ["pize", "pizza", "pizzicato", "pizzle"]
-    actual = cm.suggest('piz')
-
-    assert_equal expected, actual
-  end
-
-  def test_it_deletes_words
-    cm.populate(large_word_list)
-
+    cm.select('piz', 'pizzeria')
     cm.delete_word('pizzeria')
 
     expected = ["pize", "pizza", "pizzicato", "pizzle"]
