@@ -7,6 +7,7 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require './lib/node'
 require './lib/complete_me'
+require 'pry'
 
 class CompleteMeTest < Minitest::Test
   def test_it_exists
@@ -31,6 +32,7 @@ class CompleteMeTest < Minitest::Test
     @complete_me.node_validator('a', @complete_me.root.children)
     @complete_me.node_validator('a', @complete_me.root.children)
     assert_equal 1, @complete_me.root.children.count
+
   end
 
   def test_it_counts_words
@@ -108,5 +110,22 @@ class CompleteMeTest < Minitest::Test
     expected2 = ['pizzeria', 'pize', 'pizza', 'pizzicato', 'pizzle']
 
     assert_equal expected2, actual2
+  end
+
+  def test_it_populates_csv
+    #skip
+    complete_me = CompleteMe.new
+    complete_me.populate_with_csv('./test/addresses.csv', 'FULL_ADDRESS')
+
+    assert_equal 312_749, complete_me.count
+
+    expected = ["3161 N Eliot St",
+                "3161 N Fulton St",
+                "3161 N Hanover St",
+                "3161 N Quitman St",
+                "3161 N Saint Paul St",
+                "3161 N Wyandot St",
+                "3161 N York St"]
+    assert_equal expected, complete_me.suggest('3161 N ')
   end
 end

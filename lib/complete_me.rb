@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require './lib/node'
+require 'csv'
 
 # defines the Trie class
 class CompleteMe
@@ -139,7 +140,13 @@ class CompleteMe
         end
       end
     end
-
     @count -= 1
+  end
+
+  def populate_with_csv(csv_file, column_header)
+    csv = CSV.read(csv_file, :headers=>true)
+    csv.each do |row|
+      insert(row[column_header])
+    end
   end
 end
