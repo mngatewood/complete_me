@@ -6,6 +6,7 @@ require "minitest"
 require "minitest/emoji"
 require "minitest/autorun"
 require "../complete_me/lib/complete_me"
+require 'pry'
 
 class CompleteMeTest < Minitest::Test
   attr_reader :cm
@@ -78,9 +79,9 @@ class CompleteMeTest < Minitest::Test
 
   def test_it_can_do_addresses
     complete_me = CompleteMe.new
-    complete_me.populate(File.read('./test/address.txt'))
-    actual = complete_me.suggest('3161')
-    expected = ["3161 Arapahoe St", "3161 N Eliot St", "3161 N Fulton St", "3161 N Hanover St", "3161 N Quitman St", "3161 W Avondale Dr", "3161 W Custer Pl", "3161 W Ohio Ave"]
+    complete_me.populate_with_csv('./test/addresses.csv', 'FULL_ADDRESS')
+    actual = complete_me.suggest('3161 S')
+    expected = ["3161 S Fillmore St", "3161 S Holly Pl", "3161 S Jasmine Way", "3161 S Josephine St", "3161 S Utica St", "3161 S Waxberry Way", "3161 S Xeric Ct"]
     assert_equal actual, expected
   end
 
