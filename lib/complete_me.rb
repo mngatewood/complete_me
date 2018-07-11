@@ -116,11 +116,16 @@ class CompleteMe
     current_child
   end
 
+  def delete_from_hash(word)
+    @suggest_rank_hash.each do |key, value|
+      @suggest_rank_hash[key].delete(word)
+    end
+  end
+
   def delete_word(word)
     word_string = word
     iteration_counter = 0
-    # Split word to be deleted into an array of characters
-    # Grab the node where the final letter of the word ends
+    delete_from_hash(word)
     until word_string.empty?
       previous_node = find_node(word_string)
       current_node = find_node(word_string.chop!)
