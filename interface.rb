@@ -4,9 +4,11 @@ require 'pry'
 
 f = Flammarion::Engraving.new
 f.orientation = :horizontal
+f.title("CompleteMe")
 cm = CompleteMe.new
 cm.populate(File.read('/usr/share/dict/words'))
-
+f.style({"background-color"=>"#f4f4f5",
+          "font-color"=>"black"})
 def build(instance)
   instance.subpane('button')
 end
